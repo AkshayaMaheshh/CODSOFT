@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobPortal - Find Your Dream Job</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #667eea;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            background: none;
+            border: none;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 0.8rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Job Grid */
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .job-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .job-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-company {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-location {
+            color: #666;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .job-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .job-tag {
+            background: #e8f2ff;
+            color: #667eea;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .job-salary {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.1rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal.large {
+            max-width: 800px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            color: white;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-section {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .application-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 3000;
+        }
+
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        /* User Menu */
+        .user-menu {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            min-width: 200px;
+            z-index: 1000;
+        }
+
+        .dropdown-item {
+            padding: 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .jobs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Sample Data
+        const initialJobs = [
+            {
+                id: '1',
+                title: 'Senior React Developer',
+                company: 'TechCorp Solutions',
+                location: 'San Francisco, CA',
+                type: 'Full-time',
+                salary: '$120,000 - $150,000',
+                description: 'We are seeking a skilled React developer to join our growing team. You will work on cutting-edge web applications using the latest technologies.',
+                requirements: 'Bachelor\'s degree in Computer Science, 5+ years React experience, Strong JavaScript skills',
+                tags: ['React', 'JavaScript', 'Redux', 'TypeScript'],
+                postedBy: 'employer1',
+                featured: true,
+                postedDate: '2024-01-15'
+            },
+            {
+                id: '2',
+                title: 'Backend Engineer',
+                company: 'DataFlow Inc',
+                location: 'New York, NY',
+                type: 'Full-time',
+                salary: '$100,000 - $130,000',
+                description: 'Join our backend team to build scalable APIs and microservices. Experience with Node.js and cloud platforms required.',
+                requirements: 'Experience with Node.js, MongoDB, AWS, RESTful APIs',
+                tags: ['Node.js', 'MongoDB', 'AWS', 'REST API'],
+                postedBy: 'employer2',
+                featured: false,
+                postedDate: '2024-01-14'
+            },
+            {
+                id: '3',
+                title: 'Full Stack Developer',
+                company: 'StartupXYZ',
+                location: 'Austin, TX',
+                type: 'Contract',
+                salary: '$80 - $100/hour',
+                description: 'Looking for a versatile full-stack developer to work on various projects. Must be comfortable with both frontend and backend.',
+                requirements: 'Full-stack experience, React, Node.js, Database knowledge',
+                tags: ['React', 'Node.js', 'MySQL', 'Full Stack'],
+                postedBy: 'employer1',
+                featured: true,
+                postedDate: '2024-01-13'
+            }
+        ];
+
+        const initialUsers = [
+            {
+                id: 'employer1',
+                email: 'employer@company.com',
+                password: 'password123',
+                name: 'Tech Recruiter',
+                type: 'employer',
+                company: 'TechCorp Solutions'
+            },
+            {
+                id: 'candidate1',
+                email: 'john@example.com',
+                password: 'password123',
+                name: 'John Smith',
+                type: 'candidate'
+            }
+        ];
+
+        // Main App Component
+        function App() {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [currentUser, setCurrentUser] = useState(null);
+            const [jobs, setJobs] = useState(initialJobs);
+            const [users, setUsers] = useState(initialUsers);
+            const [applications, setApplications] = useState([]);
+            const [filteredJobs, setFilteredJobs] = useState(initialJobs);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [locationFilter, setLocationFilter] = useState('');
+            const [notification, setNotification] = useState(null);
+            const [showModal, setShowModal] = useState(null);
+            const [selectedJob, setSelectedJob] = useState(null);
+            const [showUserMenu, setShowUserMenu] = useState(false);
+
+            // Filter jobs based on search
+            useEffect(() => {
+                let filtered = jobs;
+                
+                if (searchTerm) {
+                    filtered = filtered.filter(job =>
+                        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        job.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+                    );
+                }
+                
+                if (locationFilter) {
+                    filtered = filtered.filter(job =>
+                        job.location.toLowerCase().includes(locationFilter.toLowerCase())
+                    );
+                }
+                
+                setFilteredJobs(filtered);
+            }, [jobs, searchTerm, locationFilter]);
+
+            const showNotification = (message, type = 'success') => {
+                setNotification({ message, type });
+                setTimeout(() => setNotification(null), 3000);
+            };
+
+            const handleLogin = (email, password) => {
+                const user = users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    setCurrentUser(user);
+                    setShowModal(null);
+                    showNotification(`Welcome back, ${user.name}!`);
+                    return true;
+                }
+                showNotification('Invalid credentials', 'error');
+                return false;
+            };
+
+            const handleRegister = (userData) => {
+                const existingUser = users.find(u => u.email === userData.email);
+                if (existingUser) {
+                    showNotification('User already exists', 'error');
+                    return false;
+                }
+                
+                const newUser = {
+                    ...userData,
+                    id: Date.now().toString()
+                };
+                
+                setUsers([...users, newUser]);
+                setCurrentUser(newUser);
+                setShowModal(null);
+                showNotification(`Welcome to JobPortal, ${newUser.name}!`);
+                return true;
+            };
+
+            const handleLogout = () => {
+                setCurrentUser(null);
+                setCurrentPage('home');
+                setShowUserMenu(false);
+                showNotification('Logged out successfully');
+            };
+
+            const handleJobPost = (jobData) => {
+                const newJob = {
+                    ...jobData,
+                    id: Date.now().toString(),
+                    postedBy: currentUser.id,
+                    postedDate: new Date().toISOString().split('T')[0],
+                    featured: false,
+                    tags: jobData.tags.split(',').map(tag => tag.trim())
+                };
+                
+                setJobs([newJob, ...jobs]);
+                setShowModal(null);
+                showNotification('Job posted successfully!');
+            };
+
+            const handleApply = (applicationData) => {
+                const newApplication = {
+                    id: Date.now().toString(),
+                    jobId: selectedJob.id,
+                    userId: currentUser.id,
+                    ...applicationData,
+                    appliedDate: new Date().toISOString().split('T')[0],
+                    status: 'pending'
+                };
+                
+                setApplications([...applications, newApplication]);
+                setShowModal(null);
+                showNotification('Application submitted successfully!');
+            };
+
+            const openJobDetail = (job) => {
+                setSelectedJob(job);
+                setShowModal('jobDetail');
+            };
+
+            // Navigation Component
+            const Navigation = () => (
+                <header className="header">
+                    <div className="container">
+                        <nav className="nav">
+                            <div className="logo" onClick={() => setCurrentPage('home')}>
+                                <i className="fas fa-briefcase"></i> JobPortal
+                            </div>
+                            
+                            <div className="nav-links">
+                                <button 
+                                    className={`nav-link ${currentPage === 'home' ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage('home')}
+                                >
+                                    Home
+                                </button>
+                                <button 
+                                    className={`nav-link ${currentPage === 'jobs' ? 'active' : ''}`}
+                                    onClick={() => setCurrentPage('jobs')}
+                                >
+                                    Jobs
+                                </button>
+                                {currentUser && (
+                                    <button 
+                                        className={`nav-link ${currentPage === 'dashboard' ? 'active' : ''}`}
+                                        onClick={() => setCurrentPage('dashboard')}
+                                    >
+                                        Dashboard
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="auth-section">
+                                {!currentUser ? (
+                                    <div style={{display: 'flex', gap: '1rem'}}>
+                                        <button className="btn btn-secondary" onClick={() => setShowModal('login')}>
+                                            Login
+                                        </button>
+                                        <button className="btn btn-primary" onClick={() => setShowModal('register')}>
+                                            Register
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="user-menu">
+                                        <div className="user-avatar" onClick={() => setShowUserMenu(!showUserMenu)}>
+                                            {currentUser.name.charAt(0)}
+                                        </div>
+                                        {showUserMenu && (
+                                            <div className="dropdown-menu">
+                                                <div className="dropdown-item">
+                                                    <strong>{currentUser.name}</strong><br/>
+                                                    <small>{currentUser.email}</small>
+                                                </div>
+                                                <div className="dropdown-item" onClick={() => {setCurrentPage('dashboard'); setShowUserMenu(false);}}>
+                                                    <i className="fas fa-tachometer-alt"></i> Dashboard
+                                                </div>
+                                                <div className="dropdown-item" onClick={handleLogout}>
+                                                    <i className="fas fa-sign-out-alt"></i> Logout
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </nav>
+                    </div>
+                </header>
+            );
+
+            // Job Card Component
+            const JobCard = ({ job }) => (
+                <div className="job-card" onClick={() => openJobDetail(job)}>
+                    <h3 className="job-title">{job.title}</h3>
+                    <div className="job-company">{job.company}</div>
+                    <div className="job-location">
+                        <i className="fas fa-map-marker-alt"></i>
+                        {job.location}
+                    </div>
+                    <p className="job-description">
+                        {job.description.substring(0, 120)}...
+                    </p>
+                    <div className="job-tags">
+                        {job.tags.map(tag => (
+                            <span key={tag} className="job-tag">{tag}</span>
+                        ))}
+                    </div>
+                    <div className="job-salary">{job.salary}</div>
+                    {job.featured && (
+                        <div style={{marginTop: '1rem'}}>
+                            <span style={{background: '#ffd700', color: '#333', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem'}}>
+                                <i className="fas fa-star"></i> Featured
+                            </span>
+                        </div>
+                    )}
+                </div>
+            );
+
+            // Modal Components
+            const LoginModal = () => {
+                const [email, setEmail] = useState('');
+                const [password, setPassword] = useState('');
+
+                const handleSubmit = (e) => {
+                    e.preventDefault();
+                    handleLogin(email, password);
+                };
+
+                return (
+                    <div className="modal-overlay" onClick={() => setShowModal(null)}>
+                        <div className="modal" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close" onClick={() => setShowModal(null)}>×</button>
+                            <h2>Login to JobPortal</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Email</label>
+                                    <input 
+                                        type="email" 
+                                        className="form-input"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Password</label>
+                                    <input 
+                                        type="password" 
+                                        className="form-input"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%'}}>
+                                    Login
+                                </button>
+                            </form>
+                            <div style={{marginTop: '1rem', textAlign: 'center', fontSize: '0.9rem', color: '#666'}}>
+                                <strong>Demo Accounts:</strong><br/>
+                                Employer: employer@company.com / password123<br/>
+                                Candidate: john@example.com / password123
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const RegisterModal = () => {
+                const [formData, setFormData] = useState({
+                    name: '',
+                    email: '',
+                    password: '',
+                    type: 'candidate'
+                });
+
+                const handleSubmit = (e) => {
+                    e.preventDefault();
+                    handleRegister(formData);
+                };
+
+                return (
+                    <div className="modal-overlay" onClick={() => setShowModal(null)}>
+                        <div className="modal" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close" onClick={() => setShowModal(null)}>×</button>
+                            <h2>Register for JobPortal</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Full Name</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-input"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Email</label>
+                                    <input 
+                                        type="email" 
+                                        className="form-input"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Password</label>
+                                    <input 
+                                        type="password" 
+                                        className="form-input"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Account Type</label>
+                                    <select 
+                                        className="form-select"
+                                        value={formData.type}
+                                        onChange={(e) => setFormData({...formData, type: e.target.value})}
+                                    >
+                                        <option value="candidate">Job Seeker</option>
+                                        <option value="employer">Employer</option>
+                                    </select>
+                                </div>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%'}}>
+                                    Register
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            };
+
+            const JobDetailModal = () => {
+                const hasApplied = applications.some(app => 
+                    app.jobId === selectedJob.id && app.userId === currentUser?.id
+                );
+
+                return (
+                    <div className="modal-overlay" onClick={() => setShowModal(null)}>
+                        <div className="modal large" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close" onClick={() => setShowModal(null)}>×</button>
+                            <h2>{selectedJob.title}</h2>
+                            <div style={{marginBottom: '1rem'}}>
+                                <strong>{selectedJob.company}</strong> • {selectedJob.location} • {selectedJob.type}
+                            </div>
+                            <div style={{marginBottom: '1rem', fontSize: '1.2rem', color: '#28a745', fontWeight: 'bold'}}>
+                                {selectedJob.salary}
+                            </div>
+                            
+                            <h3>Job Description</h3>
+                            <p style={{marginBottom: '1rem', lineHeight: '1.6'}}>{selectedJob.description}</p>
+                            
+                            <h3>Requirements</h3>
+                            <p style={{marginBottom: '1rem', lineHeight: '1.6'}}>{selectedJob.requirements}</p>
+                            
+                            <div style={{marginBottom: '1rem'}}>
+                                <strong>Skills:</strong>
+                                <div className="job-tags" style={{marginTop: '0.5rem'}}>
+                                    {selectedJob.tags.map(tag => (
+                                        <span key={tag} className="job-tag">{tag}</span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {currentUser && currentUser.type === 'candidate' && (
+                                <div style={{marginTop: '2rem'}}>
+                                    {hasApplied ? (
+                                        <button className="btn btn-secondary" disabled>
+                                            <i className="fas fa-check"></i> Already Applied
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            className="btn btn-primary"
+                                            onClick={() => setShowModal('apply')}
+                                        >
+                                            <i className="fas fa-paper-plane"></i> Apply Now
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                            
+                            {!currentUser && (
+                                <div style={{marginTop: '2rem'}}>
+                                    <button 
+                                        className="btn btn-primary"
+                                        onClick={() => setShowModal('login')}
+                                    >
+                                        Login to Apply
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            const ApplyModal = () => {
+                const [applicationData, setApplicationData] = useState({
+                    coverLetter: '',
+                    resume: null
+                });
+
+                const handleSubmit = (e) => {
+                    e.preventDefault();
+                    handleApply(applicationData);
+                };
+
+                return (
+                    <div className="modal-overlay" onClick={() => setShowModal(null)}>
+                        <div className="modal" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close" onClick={() => setShowModal(null)}>×</button>
+                            <h2>Apply for {selectedJob.title}</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Cover Letter</label>
+                                    <textarea 
+                                        className="form-textarea"
+                                        rows="6"
+                                        value={applicationData.coverLetter}
+                                        onChange={(e) => setApplicationData({...applicationData, coverLetter: e.target.value})}
+                                        placeholder="Tell us why you're interested in this position..."
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Resume</label>
+                                    <input 
+                                        type="file"
+                                        className="form-input"
+                                        accept=".pdf,.doc,.docx"
+                                        onChange={(e) => setApplicationData({...applicationData, resume: e.target.files[0]})}
+                                    />
+                                    <small style={{color: '#666'}}>Accepted formats: PDF, DOC, DOCX</small>
+                                </div>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%'}}>
+                                    Submit Application
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            };
+
+            const JobPostModal = () => {
+                const [jobData, setJobData] = useState({
+                    title: '',
+                    company: currentUser?.company || '',
+                    location: '',
+                    type: 'Full-time',
+                    salary: '',
+                    description: '',
+                    requirements: '',
+                    tags: ''
+                });
+
+                const handleSubmit = (e) => {
+                    e.preventDefault();
+                    handleJobPost(jobData);
+                };
+
+                return (
+                    <div className="modal-overlay" onClick={() => setShowModal(null)}>
+                        <div className="modal large" onClick={(e) => e.stopPropagation()}>
+                            <button className="modal-close" onClick={() => setShowModal(null)}>×</button>
+                            <h2>Post a New Job</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Job Title</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-input"
+                                        value={jobData.title}
+                                        onChange={(e) => setJobData({...jobData, title: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Company</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-input"
+                                        value={jobData.company}
+                                        onChange={(e) => setJobData({...jobData, company: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Location</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-input"
+                                        value={jobData.location}
+                                        onChange={(e) => setJobData({...jobData, location: e.target.value})}
+                                        placeholder="City, State"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Job Type</label>
+                                    <select 
+                                        className="form-select"
+                                        value={jobData.type}
+                                        onChange={(e) => setJobData({...jobData, type: e.target.value})}
+                                    >
+                                        <option value="Full-time">Full-time</option>
+                                        <option value="Part-time">Part-time</option>
+                                        <option value="Contract">Contract</option>
+                                        <option value="Remote">Remote</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Salary Range</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-input"
+                                        value={jobData.salary}
+                                        onChange={(e) => setJobData({...jobData, salary: e.target.value})}
+                                        placeholder="e.g. $80,000 - $100,000"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Job Description</label>
+                                    <textarea 
+                                        className="form-textarea"
+                                        rows="4"
+                                        value={jobData.description}
+                                        onChange={(e) => setJobData({...jobData, description: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Requirements</label>
+                                    <textarea 
+                                        className="form-textarea"
+                                        rows="4"
+                                        value={jobData.requirements}
+                                        onChange={(e) => setJobData({...jobData, requirements: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Skills (comma separated)</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-input"
+                                        value={jobData.tags}
+                                        onChange={(e) => setJobData({...jobData, tags: e.target.value})}
+                                        placeholder="React, JavaScript, Node.js"
+                                        required
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%'}}>
+                                    Post Job
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Home Page Component
+            const HomePage = () => (
+                <div>
+                    <div className="hero">
+                        <div className="container">
+                            <h1>Find Your Dream Job</h1>
+                            <p>Connect with top employers and discover amazing career opportunities</p>
+                            
+                            <div className="search-section">
+                                <div className="search-form">
+                                    <div className="form-group">
+                                        <label className="form-label">Job Title or Keywords</label>
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            placeholder="Search jobs..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Location</label>
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            placeholder="City, State"
+                                            value={locationFilter}
+                                            onChange={(e) => setLocationFilter(e.target.value)}
+                                        />
+                                    </div>
+                                    <button 
+                                        className="btn btn-primary"
+                                        onClick={() => setCurrentPage('jobs')}
+                                    >
+                                        <i className="fas fa-search"></i> Search Jobs
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="container">
+                        <h2 style={{color: 'white', textAlign: 'center', marginBottom: '2rem'}}>
+                            Featured Jobs
+                        </h2>
+                        <div className="jobs-grid">
+                            {jobs.filter(job => job.featured).map(job => (
+                                <JobCard key={job.id} job={job} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Jobs Page Component
+            const JobsPage = () => (
+                <div className="container">
+                    <h1 style={{color: 'white', textAlign: 'center', marginBottom: '2rem'}}>
+                        Job Listings ({filteredJobs.length} jobs found)
+                    </h1>
+                    
+                    <div className="search-section">
+                        <div className="search-form">
+                            <div className="form-group">
+                                <label className="form-label">Search Jobs</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="Job title, company, or skills..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Location</label>
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="City, State"
+                                    value={locationFilter}
+                                    onChange={(e) => setLocationFilter(e.target.value)}
+                                />
+                            </div>
+                            <button 
+                                className="btn btn-primary"
+                                onClick={() => {setSearchTerm(''); setLocationFilter('');}}
+                            >
+                                Clear Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="jobs-grid">
+                        {filteredJobs.map(job => (
+                            <JobCard key={job.id} job={job} />
+                        ))}
+                    </div>
+                    
+                    {filteredJobs.length === 0 && (
+                        <div style={{textAlign: 'center', color: 'white', padding: '2rem'}}>
+                            <h3>No jobs found</h3>
+                            <p>Try adjusting your search criteria</p>
+                        </div>
+                    )}
+                </div>
+            );
+
+            // Dashboard Component
+            const Dashboard = () => {
+                const userApplications = applications.filter(app => app.userId === currentUser?.id);
+                const employerJobs = jobs.filter(job => job.postedBy === currentUser?.id);
+                const employerApplications = applications.filter(app => 
+                    employerJobs.some(job => job.id === app.jobId)
+                );
+
+                if (currentUser?.type === 'employer') {
+                    return (
+                        <div className="container dashboard">
+                            <div className="dashboard-header">
+                                <h1>Employer Dashboard</h1>
+                                <p>Welcome back, {currentUser.name}</p>
+                            </div>
+
+                            <div className="stats-grid">
+                                <div className="stat-card">
+                                    <div className="stat-number">{employerJobs.length}</div>
+                                    <div className="stat-label">Jobs Posted</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-number">{employerApplications.length}</div>
+                                    <div className="stat-label">Applications Received</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-number">{employerJobs.filter(job => job.featured).length}</div>
+                                    <div className="stat-label">Featured Jobs</div>
+                                </div>
+                            </div>
+
+                            <div className="dashboard-section">
+                                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
+                                    <h2>Your Job Postings</h2>
+                                    <button 
+                                        className="btn btn-primary"
+                                        onClick={() => setShowModal('jobPost')}
+                                    >
+                                        <i className="fas fa-plus"></i> Post New Job
+                                    </button>
+                                </div>
+                                
+                                {employerJobs.length === 0 ? (
+                                    <p>You haven't posted any jobs yet.</p>
+                                ) : (
+                                    <div className="jobs-grid">
+                                        {employerJobs.map(job => (
+                                            <JobCard key={job.id} job={job} />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="dashboard-section">
+                                <h2>Recent Applications</h2>
+                                {employerApplications.length === 0 ? (
+                                    <p>No applications received yet.</p>
+                                ) : (
+                                    employerApplications.map(app => {
+                                        const job = jobs.find(j => j.id === app.jobId);
+                                        const candidate = users.find(u => u.id === app.userId);
+                                        return (
+                                            <div key={app.id} className="application-item">
+                                                <h4>{candidate?.name || 'Unknown Candidate'}</h4>
+                                                <p><strong>Applied for:</strong> {job?.title}</p>
+                                                <p><strong>Applied on:</strong> {app.appliedDate}</p>
+                                                <p><strong>Status:</strong> <span style={{textTransform: 'capitalize'}}>{app.status}</span></p>
+                                                {app.coverLetter && (
+                                                    <p><strong>Cover Letter:</strong> {app.coverLetter.substring(0, 100)}...</p>
+                                                )}
+                                            </div>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        </div>
+                    );
+                }
+
+                // Candidate Dashboard
+                return (
+                    <div className="container dashboard">
+                        <div className="dashboard-header">
+                            <h1>Candidate Dashboard</h1>
+                            <p>Welcome back, {currentUser.name}</p>
+                        </div>
+
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-number">{userApplications.length}</div>
+                                <div className="stat-label">Applications Sent</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">{userApplications.filter(app => app.status === 'pending').length}</div>
+                                <div className="stat-label">Pending</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">{jobs.length}</div>
+                                <div className="stat-label">Available Jobs</div>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-section">
+                            <h2>Your Applications</h2>
+                            {userApplications.length === 0 ? (
+                                <p>You haven't applied to any jobs yet. <button className="btn btn-primary" onClick={() => setCurrentPage('jobs')}>Browse Jobs</button></p>
+                            ) : (
+                                userApplications.map(app => {
+                                    const job = jobs.find(j => j.id === app.jobId);
+                                    return (
+                                        <div key={app.id} className="application-item">
+                                            <h4>{job?.title || 'Unknown Job'}</h4>
+                                            <p><strong>Company:</strong> {job?.company}</p>
+                                            <p><strong>Applied on:</strong> {app.appliedDate}</p>
+                                            <p><strong>Status:</strong> <span style={{textTransform: 'capitalize'}}>{app.status}</span></p>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+
+                        <div className="dashboard-section">
+                            <h2>Recommended Jobs</h2>
+                            <div className="jobs-grid">
+                                {jobs.slice(0, 3).map(job => (
+                                    <JobCard key={job.id} job={job} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Render current page
+            const renderCurrentPage = () => {
+                switch (currentPage) {
+                    case 'home':
+                        return <HomePage />;
+                    case 'jobs':
+                        return <JobsPage />;
+                    case 'dashboard':
+                        return currentUser ? <Dashboard /> : <HomePage />;
+                    default:
+                        return <HomePage />;
+                }
+            };
+
+            return (
+                <div className="app">
+                    <Navigation />
+                    <main className="main-content">
+                        {renderCurrentPage()}
+                    </main>
+
+                    {/* Modals */}
+                    {showModal === 'login' && <LoginModal />}
+                    {showModal === 'register' && <RegisterModal />}
+                    {showModal === 'jobDetail' && selectedJob && <JobDetailModal />}
+                    {showModal === 'apply' && selectedJob && <ApplyModal />}
+                    {showModal === 'jobPost' && currentUser?.type === 'employer' && <JobPostModal />}
+
+                    {/* Notification */}
+                    {notification && (
+                        <div className={`notification ${notification.type}`}>
+                            {notification.message}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Render the app
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
